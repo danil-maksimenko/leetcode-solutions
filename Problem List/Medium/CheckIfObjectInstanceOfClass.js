@@ -56,3 +56,36 @@ var checkIfInstanceOf = function (obj, classFunction) {
 /**
  * checkIfInstanceOf(new Date(), Date); // true
  */
+
+// Короче говоря, если мы хотим узнать, наследуется ли класс в JS,
+// хер у нас это получится через .prototype (потому что это свойство есть только у конструктора, а не у экземпляра):
+// const d = new Date();
+
+// console.log(Date.prototype);      // Date {...}
+// console.log(d.prototype);         // undefined
+// Для этого мы должны юзать Object.getPrototypeOf():
+// const d = new Date();
+
+// console.log(Date.prototype);                // Date {...}
+// console.log(Object.getPrototypeOf(d));      // Date {...}
+// НО!
+// Если мы создаём сабкласс и хотим проверить наследование, просто одного getPrototypeOf() недостаточно:
+// class DateSubclass extends Date {}
+
+// const d2 = new DateSubclass();
+// console.log(Object.getPrototypeOf(d2));     // DateSubclass {}
+// В этом случае нужно "углубляться" - доставать прототип от прототипа:
+// class DateSubclass extends Date {}
+
+// const d2 = new DateSubclass();
+// const d2Proto = Object.getPrototypeOf(d2);
+// console.log(Object.getPrototypeOf(d2Proto));     // Date {}
+
+// Every object's root prototype is the 'Object' prototype.
+// class DateSubclass extends Date {}
+
+// const d2 = new DateSubclass();
+// const d2Proto = Object.getPrototypeOf(d2);
+// const d2ProtoProto = Object.getPrototypeOf(d2Proto);
+// console.log(Object.getPrototypeOf(d2ProtoProto));
+// One more call would return null
